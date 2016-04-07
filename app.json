@@ -1,0 +1,14 @@
+{
+  "name": "PlurkMakerWebServer",
+  "description": "A Plurk Web Server for Maker in Golang"
+  "repository": "https://github.com/kkdai/plurk-makerserver",
+  "keywords": ["rss", "go", "static"],
+  "buildpacks": [
+    {
+      "url": "https://github.com/kr/heroku-buildpack-go.git"
+    },
+    {
+      "url": "heroku/go"
+    }
+  ]
+}
