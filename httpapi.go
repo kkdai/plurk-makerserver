@@ -18,8 +18,17 @@ import (
 	"net/http"
 	"os"
 
+	plurgo "github.com/kkdai/plurgo/plurkgo"
 	"github.com/mattn/go-drainclose"
 )
+
+type IncomingMsg struct {
+	ConsumerToken  string
+	ConsumerSecret string
+	AccessToken    string
+	AccessSecret   string
+	Msg            string
+}
 
 type test_struct struct {
 	Test string
@@ -28,12 +37,33 @@ type test_struct struct {
 func plurkPost(w http.ResponseWriter, req *http.Request) {
 	defer drainclose.Close(req.Body)
 	decoder := json.NewDecoder(req.Body)
-	var t test_struct
-	err := decoder.Decode(&t)
+	var in IncomingMsg
+	err := decoder.Decode(&in)
 	if err != nil {
-		log.Panic(err)
+		log.Println(err)
+		return
 	}
-	log.Println(t.Test)
+
+	log.Println("Get request:", in)
+
+	//Pass parameter
+	var plurkCred plurgo.PlurkCredentials
+	plurkCred.AccessSecret = in.AccessSecret
+	plurkCred.AccessToken = in.AccessToken
+	plurkCred.ConsumerSecret = in.ConsumerSecret
+	plurkCred.ConsumerToken = in.ConsumerToken
+
+	//Access plurk token
+	accessToken, _, err := plurgo.GetAccessToken(&plurkCred)
+	var data = map[string]string{}
+	data["content"] = in.Msg
+	data["qualifier"] = "shares"
+	result, err := plurgo.CallAPI(accessToken, "/APP/Timeline/plurkAdd", data)
+	if err != nil {
+		log.Println("failed: %v ret=%v", err, result)
+		return
+	}
+	log.Println("Plurk post success! Msg=", in.Msg)
 }
 
 func serveHttpAPI(port string, existC chan bool) {
