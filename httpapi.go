@@ -14,12 +14,12 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 
 	plurgo "github.com/kkdai/plurgo/plurkgo"
-	"github.com/mattn/go-drainclose"
 )
 
 type IncomingMsg struct {
@@ -35,16 +35,20 @@ type test_struct struct {
 }
 
 func plurkPost(w http.ResponseWriter, req *http.Request) {
-	defer drainclose.Close(req.Body)
-	decoder := json.NewDecoder(req.Body)
 	var in IncomingMsg
-	err := decoder.Decode(&in)
+
+	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		log.Println(err)
+		log.Println("Data read error:", err)
 		return
 	}
-
+	log.Println("Body:", string(body))
+	err = json.Unmarshal(body, &in)
 	log.Println("Get request:", in)
+	if err != nil {
+		log.Println("json unmarkshal error:", err)
+		return
+	}
 
 	//Pass parameter
 	var plurkCred plurgo.PlurkCredentials
