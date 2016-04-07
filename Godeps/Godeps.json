@@ -1,0 +1,17 @@
+{
+	"ImportPath": "github.com/kkdai/plurk-makerserver",
+	"GoVersion": "go1.6",
+	"Packages": [
+		"github.com/kkdai/plurgo"
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/garyburd/go-oauth/oauth",
+			"Rev": "255d509a6f270332ffcaef6723047891319a2ffb"
+		},
+		{
+			"ImportPath": "github.com/kkdai/plurgo",
+			"Rev": "e130ae249f0dee8907ec3b741cd05eca0e6c742b"
+		}
+	]
+}
